@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 from typing_extensions import Annotated, List, Literal
 
-from langchain.chat_models import init_chat_model 
+# from langchain.chat_models import init_chat_model 
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool, InjectedToolArg
@@ -17,6 +17,44 @@ from tavily import TavilyClient
 
 from deep_research_from_scratch.state_research import Summary
 from deep_research_from_scratch.prompts import summarize_webpage_prompt
+
+import os
+from ibm_watsonx_ai import Credentials
+from langchain_ibm import ChatWatsonx
+from ibm_watsonx_ai.metanames import GenTextParamsMetaNames
+
+
+def get_credentials():
+    api_key = os.environ["WATSONX_APIKEY"]
+    url = os.environ["WATSONX_URL"]
+    project_id = os.environ["WATSONX_PROJECT_ID"]
+
+    credentials = Credentials(
+        url=url,
+        api_key=api_key
+    )
+
+    return credentials, project_id, url, api_key
+
+
+def init_chat_model(model, max_tokens=28000, temperature=0.7):
+    credentials, project_id, url, api_key = get_credentials()
+
+    parameters = {
+        GenTextParamsMetaNames.MAX_NEW_TOKENS: max_tokens,
+        GenTextParamsMetaNames.MIN_NEW_TOKENS: 10,
+        GenTextParamsMetaNames.TEMPERATURE: temperature,
+    }
+
+    chat_model = ChatWatsonx(
+        model_id=model,
+        url=url,
+        project_id=project_id,
+        params=parameters,
+        api_key=api_key
+    )
+
+    return chat_model
 
 # ===== UTILITY FUNCTIONS =====
 
@@ -39,7 +77,8 @@ def get_current_dir() -> Path:
 
 # ===== CONFIGURATION =====
 
-summarization_model = init_chat_model(model="openai:gpt-4.1-mini")
+# summarization_model = init_chat_model(model="openai:gpt-4.1-mini")
+summarization_model = init_chat_model(model="meta-llama/llama-4-maverick-17b-128e-instruct-fp8")
 tavily_client = TavilyClient()
 
 # ===== SEARCH FUNCTIONS =====

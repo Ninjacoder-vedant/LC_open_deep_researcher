@@ -2,6 +2,38 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 import json
+from langchain_ibm import ChatWatsonx
+from ibm_watsonx_ai.metanames import GenTextParamsMetaNames
+import os
+
+keys = os.environ.get("WATSONX_APIKEY", "")
+urls = os.environ.get("WATSONX_URL", "")
+project_id = os.environ.get("WATSONX_PROJECT_ID", "")
+
+from ibm_watsonx_ai import Credentials,APIClient
+credentials = Credentials(
+    url=urls,
+    api_key=keys
+)
+
+def init_chat_model(model, max_tokens = 28000, temperature = 0.7):
+    parameters = {
+        GenTextParamsMetaNames.MAX_NEW_TOKENS: 25,
+        GenTextParamsMetaNames.MIN_NEW_TOKENS: 10,
+        GenTextParamsMetaNames.TEMPERATURE: temperature,
+        GenTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 1000
+        # GenTextParamsMetaNames.TOP_K: 20,
+    }
+
+    model = ChatWatsonx(
+        model_id=model,
+        url=urls,
+        project_id=project_id,
+        params=parameters,
+        api_key=keys
+    )
+    
+    return model
 
 console = Console()
 

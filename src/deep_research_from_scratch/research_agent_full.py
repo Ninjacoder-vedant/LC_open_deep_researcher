@@ -15,16 +15,17 @@ input through final report delivery.
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, START, END
 
-from deep_research_from_scratch.utils import get_today_str
+from deep_research_from_scratch.utils import get_today_str, init_chat_model
 from deep_research_from_scratch.prompts import final_report_generation_prompt
 from deep_research_from_scratch.state_scope import AgentState, AgentInputState
 from deep_research_from_scratch.research_agent_scope import clarify_with_user, write_research_brief
 from deep_research_from_scratch.multi_agent_supervisor import supervisor_agent
 
 # ===== Config =====
+# from langchain.chat_models import init_chat_model
 
-from langchain.chat_models import init_chat_model
-writer_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000) # model="anthropic:claude-sonnet-4-20250514", max_tokens=64000
+# writer_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000) # model="anthropic:claude-sonnet-4-20250514", max_tokens=64000
+writer_model = init_chat_model(model="mistral-large-2512", max_tokens=64000)
 
 # ===== FINAL REPORT GENERATION =====
 

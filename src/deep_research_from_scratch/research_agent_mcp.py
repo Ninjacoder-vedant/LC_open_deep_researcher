@@ -18,14 +18,14 @@ import os
 
 from typing_extensions import Literal
 
-from langchain.chat_models import init_chat_model
+# from langchain.chat_models import init_chat_model
 from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, filter_messages
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.graph import StateGraph, START, END
 
 from deep_research_from_scratch.prompts import research_agent_prompt_with_mcp, compress_research_system_prompt, compress_research_human_message
 from deep_research_from_scratch.state_research import ResearcherState, ResearcherOutputState
-from deep_research_from_scratch.utils import get_today_str, think_tool, get_current_dir
+from deep_research_from_scratch.utils import init_chat_model, get_today_str, think_tool, get_current_dir
 
 # ===== CONFIGURATION =====
 
@@ -53,8 +53,8 @@ def get_mcp_client():
     return _client
 
 # Initialize models
-compress_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000)
-model = init_chat_model(model="anthropic:claude-sonnet-4-20250514")
+compress_model = init_chat_model(model="mistral-large-2512", max_tokens=32000)
+model = init_chat_model(model="mistral-large-2512")
 
 # ===== AGENT NODES =====
 
